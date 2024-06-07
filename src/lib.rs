@@ -17,7 +17,17 @@ pub const STACKLET_BOUNDARY_MEM_ADDR: u32 = 0x2000_0000;
 
 /// The extra size added to a stacklet allocation request in addition to the
 /// allocation size requested by the function prologue.
-pub const STKLET_ADDITION_ALLOC_SIZE: usize = 64;
+pub const STACKLET_ADDITION_ALLOC_SIZE: usize = 64;
+
+/// The stack size of the idle task when it is just created. If
+/// [`ALLOW_DYNAMIC_STACK`] is set to true, this value can be kept to 0 so
+/// that the stack will be allocated completely dynamically.
+pub const IDLE_TASK_INITIAL_STACK_SIZE: usize = 0;
+
+/// The stack size of the main task when it is just created. If
+/// [`ALLOW_DYNAMIC_STACK`] is set to true, this value can be kept to 0 so
+/// that the stack will be allocated completely dynamically.
+pub const MAIN_TASK_INITIAL_STACK_SIZE: usize = 0;
 
 /* ########################### */
 /* ### Heap Configurations ### */
