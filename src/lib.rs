@@ -9,6 +9,9 @@ pub const CONTIGUOUS_STACK_BOUNDARY: u32 = 0x2000_0010;
 /// The bottom of the congituous stack.
 pub const CONTIGUOUS_STACK_BOTTOM: u32 = 0x2000_1000;
 
+/// Whether dynamic extension of the stack is allowed.
+pub const ALLOW_DYNAMIC_STACK: bool = true;
+
 /// The address in memory where the active stacklet boundary is stored.
 pub const STACKLET_BOUNDARY_MEM_ADDR: u32 = 0x2000_0000;
 
