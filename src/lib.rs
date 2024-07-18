@@ -122,6 +122,19 @@ pub const IDLE_TASK_PRIORITY: u8 = TASK_PRIORITY_LEVELS - 1;
 /// The task priority of the main task.
 pub const MAIN_TASK_PRIORITY: u8 = 0;
 
+/// The priority for a task when the priority is not explicitly set during
+/// task creation.
+pub const DEFAULT_TASK_PRIORITY: u8 = 8;
+
 /// A panicked task will get its priority reduced to the unwind priority,
 /// which is very low but still higher than idle priority.
 pub const UNWIND_PRIORITY: u8 = TASK_PRIORITY_LEVELS - 3;
+
+/// The ID for the idle task. Other tasks must not use the same ID as the idle
+/// task.
+pub const IDLE_TASK_ID: u8 = 0;
+
+/// The ID for a task when the ID is not explicitly set during task creation.
+/// Tasks can have the same ID as long as the ID is different from the idle
+/// task's ID.
+pub const DEFAULT_TASK_ID: u8 = 255;
