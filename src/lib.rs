@@ -4,16 +4,13 @@
 /* ############################ */
 
 /// The boundary of the contiguous stack that its top should not grow beyond.
-pub const CONTIGUOUS_STACK_BOUNDARY: u32 = 0x2000_0010;
+pub const CONTIGUOUS_STACK_BOUNDARY: u32 = 0x2000_0020;
 
 /// The bottom of the congituous stack.
 pub const CONTIGUOUS_STACK_BOTTOM: u32 = 0x2000_1000;
 
 /// Whether dynamic extension of the stack is allowed.
 pub const ALLOW_DYNAMIC_STACK: bool = true;
-
-/// The address in memory where the active stacklet boundary is stored.
-pub const STACKLET_BOUNDARY_MEM_ADDR: u32 = 0x2000_0000;
 
 /// The extra size added to a stacklet allocation request in addition to the
 /// allocation size requested by the function prologue.
@@ -103,6 +100,11 @@ pub const PENDSV_PRIORITY: u8 = 13 * IRQ_PRIORITY_GRANULARITY;
 /* ########################### */
 /* ### Task Configurations ### */
 /* ########################### */
+
+/// The address in memory where the task local storage is placed. Currently
+/// this must be the fixed value `0x2000_0000` because the compiler toolchain
+/// assumes this value.
+pub const TLS_MEM_ADDR: u32 = 0x2000_0000;
 
 /// The maximum number of tasks. Must be a power of 2.
 pub const MAX_TASK_NUMBER: usize = 16;
