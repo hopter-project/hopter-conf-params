@@ -132,11 +132,10 @@ pub const DEFAULT_TASK_PRIORITY: u8 = 8;
 /// which is very low but still higher than idle priority.
 pub const UNWIND_PRIORITY: u8 = TASK_PRIORITY_LEVELS - 3;
 
-/// The ID for the idle task. Other tasks must not use the same ID as the idle
-/// task.
+/// The ID for the idle task. A task ID does not have functional purpose. It
+/// might be helpful for diagnosing bugs.
 pub const IDLE_TASK_ID: u8 = 0;
 
 /// The ID for a task when the ID is not explicitly set during task creation.
-/// Tasks can have the same ID as long as the ID is different from the idle
-/// task's ID.
+/// Tasks can have the same ID.
 pub const DEFAULT_TASK_ID: u8 = 255;
