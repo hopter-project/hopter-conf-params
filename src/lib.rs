@@ -138,7 +138,7 @@ pub const IDLE_TASK_ID: u8 = 0;
 
 /// The ID for the main task. A task ID does not have functional purpose. It
 /// might be helpful for diagnosing bugs.
-pub const MAIN_TASK_ID: u8 = 0;
+pub const MAIN_TASK_ID: u8 = 1;
 
 /// The ID for a task when the ID is not explicitly set during task creation.
 /// Tasks can have the same ID.
