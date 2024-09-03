@@ -25,6 +25,16 @@ pub const ALLOW_DYNAMIC_STACK: bool = true;
 /// allocation size requested by the function prologue.
 pub const STACKLET_ADDITION_ALLOC_SIZE: usize = 64;
 
+/// The number of hot-split site that a task can address. The larger the number
+/// is, the unlikely that a task will suffer from hot-split, but the task
+/// struct also becomes larger.
+pub const HOT_SPLIT_PREVENTION_CACHE_SIZE: usize = 4;
+
+/// During the existance of a stacklet, if [`HOT_SPLIT_DETECTION_THRESHOLD`] or
+/// more new stacklet allocation is requested while the task is running with the
+/// stacklet, it will be considered as a hot-split site.
+pub const HOT_SPLIT_DETECTION_THRESHOLD: usize = 10;
+
 /// The stack size of the idle task when it is just created. If
 /// [`ALLOW_DYNAMIC_STACK`] is set to true, this value can be kept to 0 so
 /// that the stack will be allocated completely dynamically.
