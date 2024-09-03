@@ -162,3 +162,7 @@ pub const MAIN_TASK_ID: u8 = 1;
 /// The ID for a task when the ID is not explicitly set during task creation.
 /// Tasks can have the same ID.
 pub const DEFAULT_TASK_ID: u8 = 255;
+
+/// The number of breathing tasks that can run concurrently, i.e. not blocked
+/// on the `wait` function.
+pub const BREATHING_CONCURRENCY: usize = 3;
