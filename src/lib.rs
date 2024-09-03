@@ -6,7 +6,7 @@
 /// The frequency of the SysTick timer clock. Must be set correctly because
 /// Hopter relies on it to configure the SysTick counter to trigger the
 /// interrupt at 1 millisecond interval.
-pub const SYSTICK_FREQUENCY_HZ: usize = 168_000_000;
+pub const SYSTICK_FREQUENCY_HZ: u32 = 168_000_000;
 
 /* ############################ */
 /* ### Stack Configurations ### */
