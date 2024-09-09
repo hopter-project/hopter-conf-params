@@ -1,4 +1,20 @@
+//! This crate defines system configuration parameters for Hopter embedded
+//! operating system. Clients of Hopter can change them as needed.
+//!
+//! For the correctness of system functioning, make sure the following two
+//! parameters are correctly set.
+//! - [`SYSTICK_FREQUENCY_HZ`] : Hopter depends on it to generate 1 millisecond
+//!   interval ticks.
+//! - [`RAM_END_ADDR`] : Hopter's heap region will end here.
+//!
+//! Names that are prefixed with single underscore are considered semi-private.
+//! One should not change it unless being familiar with Hopter kernel's source
+//! code. Names that are prefixed with double underscores are considered
+//! private. One should not change it unless the corresponding kernel code and
+//! the compiler's source code are also changed accordingly.
+
 #![no_std]
+
 /* ############################ */
 /* ### Clock Configurations ### */
 /* ############################ */
@@ -11,12 +27,6 @@ pub const SYSTICK_FREQUENCY_HZ: u32 = 168_000_000;
 /* ############################ */
 /* ### Stack Configurations ### */
 /* ############################ */
-
-/// The boundary of the contiguous stack that its top should not grow beyond.
-pub const CONTIGUOUS_STACK_BOUNDARY: u32 = 0x2000_0020;
-
-/// The bottom of the congituous stack.
-pub const CONTIGUOUS_STACK_BOTTOM: u32 = 0x2000_1000;
 
 /// Whether dynamic extension of the stack is allowed.
 pub const ALLOW_DYNAMIC_STACK: bool = true;
@@ -35,28 +45,34 @@ pub const HOT_SPLIT_PREVENTION_CACHE_SIZE: usize = 4;
 /// stacklet, it will be considered as a hot-split site.
 pub const HOT_SPLIT_DETECTION_THRESHOLD: usize = 10;
 
-/// The stack size of the idle task when it is just created. If
-/// [`ALLOW_DYNAMIC_STACK`] is set to true, this value can be kept to 0 so
-/// that the stack will be allocated completely dynamically.
-pub const IDLE_TASK_INITIAL_STACK_SIZE: usize = 0;
-
 /// The stack size of the main task when it is just created. If
 /// [`ALLOW_DYNAMIC_STACK`] is set to true, this value can be kept to 0 so
 /// that the stack will be allocated completely dynamically.
 pub const MAIN_TASK_INITIAL_STACK_SIZE: usize = 0;
+
+/// The stack size of the idle task when it is just created. If
+/// [`ALLOW_DYNAMIC_STACK`] is set to true, this value can be kept to 0 so
+/// that the stack will be allocated completely dynamically.
+pub const _IDLE_TASK_INITIAL_STACK_SIZE: usize = 0;
+
+/// The bottom of the congituous stack.
+pub const _CONTIGUOUS_STACK_BOTTOM: u32 = 0x2000_1000;
+
+/// The boundary of the contiguous stack that its top should not grow beyond.
+pub const __CONTIGUOUS_STACK_BOUNDARY: u32 = 0x2000_0020;
 
 /* ########################### */
 /* ### Heap Configurations ### */
 /* ########################### */
 
 /// The ending address of the heap region.
-pub const HEAP_END: u32 = 0x2002_0000;
+pub const RAM_END_ADDR: u32 = 0x2002_0000;
 
 /// Free memory chunks use 16-bit links to form linked lists. Since memory
 /// chunks are 4-byte aligned, the linkes can represent a range of 2^18 bytes.
 /// The represented range is
-/// `[MEM_CHUNK_LINK_OFFSET, MEM_CHUNK_LINK_OFFSET + 2^18)`.
-pub const MEM_CHUNK_LINK_OFFSET: u32 = 0x2000_0000;
+/// `[__MEM_CHUNK_LINK_OFFSET, __MEM_CHUNK_LINK_OFFSET + 2^18)`.
+pub const __MEM_CHUNK_LINK_OFFSET: u32 = 0x2000_0000;
 
 /* ################################ */
 /* ### Interrupt Configurations ### */
@@ -66,45 +82,46 @@ pub const MEM_CHUNK_LINK_OFFSET: u32 = 0x2000_0000;
 /// The interrupt priority registers on Cortex-M reserves 8-bits for each
 /// interrupt, but for most MCU implementations only a few significant bits
 /// are used. For example, if only the top 5 significant bits are used, then
-/// the numerical granularity will be 8. If the top 4 significant bits are used,
-/// then the numerical granularity will be 16. See Nested Vectored Interrupt
-/// Controller (NVIC) in Cortex-M for details.
-pub const IRQ_PRIORITY_GRANULARITY: u8 = 16;
+/// the numerical granularity will be 16. If the top 3 significant bits are
+/// used, then the numerical granularity will be 32. See Nested Vectored
+/// Interrupt Controller (NVIC) in Cortex-M for details.
+///
+/// If the MCU supports more functional bits than the default configuration,
+/// one can reduce the value of [`IRQ_PRIORITY_GRANULARITY`] to a smaller
+/// power of 2, and scale up the IRQ priority constants accordingly. This
+/// will allow more levels between [`IRQ_MAX_PRIORITY`] and
+/// [`IRQ_MIN_PRIORITY`] for applications to use.
+pub const IRQ_PRIORITY_GRANULARITY: u8 = 32;
 
 /// The maximum priority of an interrupt. It has the smallest numerical value.
-pub const IRQ_MAX_PRIORITY: u8 = 7 * IRQ_PRIORITY_GRANULARITY;
+pub const IRQ_MAX_PRIORITY: u8 = 1 * IRQ_PRIORITY_GRANULARITY;
 
 /// The higher priority of an interrupt. Defined for convenience.
-pub const IRQ_HIGH_PRIORITY: u8 = 8 * IRQ_PRIORITY_GRANULARITY;
+pub const IRQ_HIGH_PRIORITY: u8 = 2 * IRQ_PRIORITY_GRANULARITY;
 
 /// The normal priority of an interrupt. Defined for convenience.
-pub const IRQ_NORMAL_PRIORITY: u8 = 9 * IRQ_PRIORITY_GRANULARITY;
+pub const IRQ_NORMAL_PRIORITY: u8 = 3 * IRQ_PRIORITY_GRANULARITY;
 
 /// The lower priority of an interrupt. Defined for convenience.
-pub const IRQ_LOW_PRIORITY: u8 = 10 * IRQ_PRIORITY_GRANULARITY;
+pub const IRQ_LOW_PRIORITY: u8 = 4 * IRQ_PRIORITY_GRANULARITY;
 
 /// The minimum priority of an interrupt. It has the largest numerical value.
-pub const IRQ_MIN_PRIORITY: u8 = 11 * IRQ_PRIORITY_GRANULARITY;
-
-/// The priority of SysTick interrupt.
-pub const SYSTICK_PRIORITY: u8 = IRQ_LOW_PRIORITY;
+pub const IRQ_MIN_PRIORITY: u8 = 5 * IRQ_PRIORITY_GRANULARITY;
 
 /// Hopter globally enables or disables interrupts by configuring the BASEPRI
-/// register. IRQs with higher priority (smaller numerical value) than BASEPRI
-/// are enabled. This value should be set to be lower than all IRQ priority
-/// levels.
-pub const IRQ_ENABLE_BASEPRI_PRIORITY: u8 = 14 * IRQ_PRIORITY_GRANULARITY;
+/// register. When set to 0, no interrupt will be masked.
+pub const IRQ_ENABLE_BASEPRI_PRIORITY: u8 = 0 * IRQ_PRIORITY_GRANULARITY;
 
 /// Hopter globally enables or disables interrupts by configuring the BASEPRI
 /// register. IRQs with lower or equal priority (greater or qeual numerical
 /// value) than BASEPRI are disabled. This value should be set to be higher or
 /// equal than all IRQ priority levels.
-pub const IRQ_DISABLE_BASEPRI_PRIORITY: u8 = 6 * IRQ_PRIORITY_GRANULARITY;
+pub const IRQ_DISABLE_BASEPRI_PRIORITY: u8 = 1 * IRQ_PRIORITY_GRANULARITY;
 
 /// When the interrupt is not globally masked, i.e. the normal case, the SVC
 /// is set to a priority lower than all IRQs, so that IRQs can nest above an
 /// active SVC and get served promptly.
-pub const SVC_NORMAL_PRIORITY: u8 = 12 * IRQ_PRIORITY_GRANULARITY;
+pub const SVC_NORMAL_PRIORITY: u8 = 6 * IRQ_PRIORITY_GRANULARITY;
 
 /// When the interrupt is globally masked, SVC still need to be allowed because
 /// growing segmented stacks depend on it. During the period that the interrupt
@@ -114,16 +131,14 @@ pub const SVC_RAISED_PRIORITY: u8 = 0 * IRQ_PRIORITY_GRANULARITY;
 
 /// PendSV is used to implement context switch. Since an SVC may tail chain a
 /// PendSV to perform context switch, PendSV's priority must be lower than SVC.
-pub const PENDSV_PRIORITY: u8 = 13 * IRQ_PRIORITY_GRANULARITY;
+pub const PENDSV_PRIORITY: u8 = 7 * IRQ_PRIORITY_GRANULARITY;
+
+/// The priority of SysTick interrupt.
+pub const SYSTICK_PRIORITY: u8 = IRQ_LOW_PRIORITY;
 
 /* ########################### */
 /* ### Task Configurations ### */
 /* ########################### */
-
-/// The address in memory where the task local storage is placed. Currently
-/// this must be the fixed value `0x2000_0000` because the compiler toolchain
-/// assumes this value.
-pub const TLS_MEM_ADDR: u32 = 0x2000_0000;
 
 /// The maximum number of tasks. Must be a power of 2.
 pub const MAX_TASK_NUMBER: usize = 16;
@@ -131,6 +146,10 @@ pub const MAX_TASK_NUMBER: usize = 16;
 /// Whether a ready higher priority task should cause a lower priority running
 /// task to yield.
 pub const ALLOW_TASK_PREEMPTION: bool = true;
+
+/// The number of breathing tasks that can run concurrently, i.e. not blocked
+/// on the `wait` function.
+pub const BREATHING_CONCURRENCY: usize = 3;
 
 /// Maximum priority number. Lower numerical numbers represent higher priorities.
 /// Allowed priority range: 0 to (TASK_PRIORITY_LEVELS - 1).
@@ -163,6 +182,7 @@ pub const MAIN_TASK_ID: u8 = 1;
 /// Tasks can have the same ID.
 pub const DEFAULT_TASK_ID: u8 = 255;
 
-/// The number of breathing tasks that can run concurrently, i.e. not blocked
-/// on the `wait` function.
-pub const BREATHING_CONCURRENCY: usize = 3;
+/// The address in memory where the task local storage is placed. Currently
+/// this must be the fixed value `0x2000_0000` because the compiler toolchain
+/// assumes this value.
+pub const __TLS_MEM_ADDR: u32 = 0x2000_0000;
