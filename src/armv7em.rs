@@ -40,7 +40,7 @@ pub const _IDLE_TASK_INITIAL_STACK_SIZE: usize = 0;
 
 /// The length of the contiguous stack placed at the beginning of the RAM region.
 /// The value must match the one in `memory.x`.
-pub const _CONTIGUOUS_STACK_LENGTH: u32 = 0x1000;
+pub const _CONTIGUOUS_STACK_LENGTH: u32 = 0x400;
 
 /// The bottom of the congituous stack.
 pub const _CONTIGUOUS_STACK_BOTTOM: u32 = 0x2000_0000 + _CONTIGUOUS_STACK_LENGTH;

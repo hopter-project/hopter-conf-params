@@ -40,7 +40,7 @@ pub const _IDLE_TASK_INITIAL_STACK_SIZE: usize = 0;
 
 /// The length of the contiguous stack placed at the beginning of the RAM region.
 /// The value must match the one in `memory.x`.
-pub const _CONTIGUOUS_STACK_LENGTH: u32 = 0x1000;
+pub const _CONTIGUOUS_STACK_LENGTH: u32 = 0x400;
 
 /// The bottom of the congituous stack.
 pub const _CONTIGUOUS_STACK_BOTTOM: u32 = 0x2000_0000 + _CONTIGUOUS_STACK_LENGTH;
@@ -53,7 +53,7 @@ pub const __CONTIGUOUS_STACK_BOUNDARY: u32 = 0x2000_0020;
 /* ########################### */
 
 /// The ending address of the heap region.
-pub const RAM_END_ADDR: u32 = 0x2002_0000;
+pub const RAM_END_ADDR: u32 = 0x2000_4000;
 
 /// Free memory chunks use 16-bit links to form linked lists. Since memory
 /// chunks are 4-byte aligned, the linkes can represent a range of 2^18 bytes.
